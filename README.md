@@ -2,8 +2,8 @@
 
 ## Requirements
 
-- Python 3.9.7
-- Version manager: asdf
+- Python 3.9.7 (or the version in .python-version, whichever is higher)
+- Version manager: pyenv via Homebrew
 - Virtualenv
 
 ## Development
