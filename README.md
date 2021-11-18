@@ -20,6 +20,13 @@ source bin/activate
 ```sh
 pip install -r requirements.txt
 ```
+- Prepare your `client_secret.json`:
+    - Login to your Google developer console. (If you don't have an account, you'll need to create one
+    and then create an app with the Calendar API enabled.)
+
+    - Download the OAuth credential json file
+    Rename it to `client_secret.json` and put it in the root directory of this project
+
 - Run connect:
 ```sh
 python connect.py
