@@ -22,8 +22,8 @@ def index():
   return print_index_table()
 
 
-@app.route('/test')
-def test_api_request():
+@app.route('/create')
+def create_an_event():
   if 'credentials' not in flask.session:
     return flask.redirect('authorize')
 
@@ -54,6 +54,41 @@ def test_api_request():
   #              credentials in a persistent database instead.
   flask.session['credentials'] = credentials_to_dict(credentials)
 
+  return flask.jsonify(events)
+
+@app.route('/test')
+def test_api_request():
+  if 'credentials' not in flask.session:
+    return flask.redirect('authorize')
+
+  # Load credentials from the session.
+  credentials = google.oauth2.credentials.Credentials(
+      **flask.session['credentials'])
+
+  service = googleapiclient.discovery.build(
+      API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+
+  now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
+  print('Getting the upcoming 10 events')
+
+  events_result = service.events().list(calendarId='primary', timeMin=now,
+          maxResults=1, singleEvents=True,
+          orderBy='startTime').execute()
+  events = events_result.get('items', [])
+
+  if not events:
+      print('No upcoming events found.')
+  for event in events:
+      start = event['start'].get('dateTime', event['start'].get('date'))
+      print(start, event['summary'])
+
+  # Save credentials back to session in case access token was refreshed.
+  # ACTION ITEM: In a production app, you likely want to save these
+  #              credentials in a persistent database instead.
+  flask.session['credentials'] = credentials_to_dict(credentials)
+
+  print(credentials_to_dict(credentials))
   return flask.jsonify(events)
 
 
